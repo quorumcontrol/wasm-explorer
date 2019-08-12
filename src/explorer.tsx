@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDefault, ChainTree, CID } from 'tupelo-wasm-sdk';
+import { getDefault, ChainTree } from 'tupelo-wasm-sdk';
 import { Typography } from '@material-ui/core';
 import { useAsync } from 'react-async-hook';
 import NodeDisplay from './nodedisplay';
@@ -19,12 +19,7 @@ const fetchTree = async (did: string):Promise<IFetchTreeResult> => {
     const community = await getDefault()
 
     try {
-        const currState = await community.getCurrentState(did)
-        const sig = currState.getSignature()
-        if (sig === undefined) {
-            throw new Error("error undefined signature")
-        }
-        const tip = new CID(Buffer.from(sig.getNewTip_asU8()))
+        const tip = await community.getTip(did)
         const tree = new ChainTree({
             store: community.blockservice,
             tip: tip,

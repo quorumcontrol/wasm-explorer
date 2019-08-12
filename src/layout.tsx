@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Paper, Container, Grid, Theme, AppBar, Toolbar, Typography, TextField, InputAdornment } from '@material-ui/core';
 import Explorer from './explorer';
 import { makeStyles } from '@material-ui/styles';
 import SearchIcon from '@material-ui/icons/Search';
+import { debounce } from 'ts-debounce';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -28,6 +29,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const Layout = () => {
     const classes = useStyles();
+    let [search,setSearch] = useState("")
+
+    setSearch = debounce(setSearch, 200)
 
     return (
         <Container maxWidth="md">
@@ -44,6 +48,9 @@ export const Layout = () => {
                         variant="filled"
                         InputProps={{
                             startAdornment: <InputAdornment position="start"><SearchIcon className={classes.searchIcon} /></InputAdornment>,
+                        }}
+                        onChange={(evt)=> {
+                            setSearch(evt.target.value)
                         }}/>
                 </Toolbar>
             </AppBar>
@@ -55,7 +62,7 @@ export const Layout = () => {
             >
                 <Grid item xs={12} spacing={2}>
                     <Paper className={classes.root}>
-                        <Explorer did="did:tupelo:1234"></Explorer>
+                        <Explorer did={search}></Explorer>
                     </Paper>
                 </Grid>
             </Grid>

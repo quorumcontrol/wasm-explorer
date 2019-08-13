@@ -3,6 +3,28 @@ import { getDefault, ChainTree } from 'tupelo-wasm-sdk';
 import { Typography, makeStyles, Theme } from '@material-ui/core';
 import {Link} from 'react-navi'
 import NodeDisplay from './nodedisplay';
+import { route } from 'navi'
+
+
+export const explorerRoute = route(async (req) => {
+    const did = req.params.did
+    const fetchTreeResult = await fetchTree(did)
+    let path = [""]
+    let decodedCbor
+    if (req.params.path) {
+        path = req.params.path.split("/")
+    }
+    if (fetchTreeResult.tree !== undefined) {
+        const resolveResult = await fetchTreeResult.tree.resolve(path)
+        if (resolveResult.value !== undefined) {
+            decodedCbor = resolveResult.value
+        }
+    }
+    return {
+        view: <Explorer did={did} path={path} fetchTreeResult={fetchTreeResult} decodedCbor={decodedCbor} />
+    }
+})
+
 
 const useStyles = makeStyles((theme: Theme) => ({
     pathDisplay: {

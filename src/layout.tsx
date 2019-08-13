@@ -1,7 +1,7 @@
 import React, { useState, Suspense } from 'react';
 
 import { Paper, Container, Grid, Theme, AppBar, Toolbar, Typography, TextField, InputAdornment } from '@material-ui/core';
-import Explorer, { fetchTree } from './explorer';
+import { explorerRoute } from './explorer';
 import { makeStyles } from '@material-ui/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import { mount, route } from 'navi'
@@ -35,25 +35,7 @@ const routes =
         '/': route({
             view: <div>Awaiting your DID</div>
         }),
-        '/chaintrees/:did': route(async (req) => {
-            const did = req.params.did
-            const fetchTreeResult = await fetchTree(did)
-            let path = [""]
-            let decodedCbor
-            if (req.params.path) {
-                path = req.params.path.split("/")
-            }
-            if (fetchTreeResult.tree !== undefined) {
-                const resolveResult = await fetchTreeResult.tree.resolve(path)
-                if (resolveResult.value !== undefined) {
-                    decodedCbor = resolveResult.value
-                }
-            }
-            return {
-                view: <Explorer did={did} path={path} fetchTreeResult={fetchTreeResult} decodedCbor={decodedCbor} />
-            }
-        })
-
+        '/chaintrees/:did': explorerRoute,
     })
 
 export const NavBar = () => {

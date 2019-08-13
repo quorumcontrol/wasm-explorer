@@ -62,7 +62,7 @@ export const loginRoute = mount({
         const tree = await userTree(username)
         if (tree) {
             return {
-                view: <UsernameUnavailable userName={username} />
+                view: <UsernameUnavailable userName={username} tree={tree} />
             }
         } else {
             return {
@@ -77,10 +77,49 @@ export const loginRoute = mount({
  * 
  * When the username is unavailable
  */
-const UsernameUnavailable = ({userName}:{userName:string}) => {
+const UsernameUnavailable = ({userName, tree}:{userName:string, tree:ChainTree}) => {
+    const [_userTree,setUserTree] = useGlobalState("userTree")
+    const [_userKey,setUserKey] = useGlobalState("userKey")
+    const navigation = useNavigation()
+
+    const [loading,setLoading] = useState(false)
+    const [password,setPassword] = useState("")
+    const [badPassword,setBadPassword] = useState(false)
+
+    const handleSubmit = async (evt:React.FormEvent)=> {
+        setLoading(true)
+        setBadPassword(false)
+        evt.preventDefault()
+        let secureKey = await EcdsaKey.passPhraseKey(Buffer.from(password), Buffer.from(userName))
+        let secureAddr = await Tupelo.ecdsaPubkeyToAddress(secureKey.publicKey)
+        let resolveResp = await tree.resolve(["tree", "_tupelo", "authentications"])
+        setLoading(false)
+        let auths:string[] = resolveResp.value
+        if (auths.includes(secureAddr)) {
+            setUserKey(secureKey)
+            setUserTree(tree)
+            navigation.navigate("/wallet")
+        } else {
+            setBadPassword(true)
+        }
+        setLoading(false)
+    }
+
     return (
         <div>
             Username {userName} is NOT available.
+            <p>Your Username? You can login.</p>
+            <form onSubmit={handleSubmit}>
+            {loading ? <CircularProgress/> : null}
+             <Grid container spacing={2}>
+                    <Grid item>
+                        <TextField error={badPassword} label="password" id="password" type="password" value={password} onChange={(evt) => {setPassword(evt.target.value)}}/>
+                    </Grid>
+                    <Grid item>
+                        <Button type="submit" variant="contained">Submit</Button>
+                    </Grid>
+                </Grid>
+            </form>
         </div>
     )
 }
@@ -98,7 +137,11 @@ const UsernameAvailable = ({userName}:{userName:string}) => {
     const [password,setPassword] = useState("")
     const [loading,setLoading] = useState(false)
 
-
+    /**
+     * * create the private key from the password
+     * * change ownership of the known ChainTree to the new key
+     * * change the global state to reflect the user is logged in
+     */
     const registerUser = async ()=> {
         setLoading(true)
         const insecureKey = await publicUserKey(userName)

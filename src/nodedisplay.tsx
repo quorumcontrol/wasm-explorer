@@ -1,8 +1,16 @@
 import React from 'react';
 import { Link } from 'react-navi'
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
+import { Table, TableHead, TableBody, TableRow, TableCell, Theme } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+
+const useStyles = makeStyles((theme: Theme) => ({
+    preFormatted: {
+        whiteSpace: "pre",
+    },
+}));
 
 const NodeRow = ({ label, value, path, did }: { did: string, path: string[], label: string, value: any }) => {
+    const classes = useStyles()
     let display
     if (value.constructor.name === "CID") {
         display = (
@@ -14,7 +22,7 @@ const NodeRow = ({ label, value, path, did }: { did: string, path: string[], lab
         )
     } else {
         display = (
-            <p>{JSON.stringify(value)}</p>
+            <code className={classes.preFormatted}>{JSON.stringify(value, null, 2)}</code>
         )
     }
 
@@ -47,6 +55,5 @@ const NodeExplorer = ({ decodedCbor, path, did }: { decodedCbor: any, path: stri
         </div>
     )
 }
-
 
 export default NodeExplorer

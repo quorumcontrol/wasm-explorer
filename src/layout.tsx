@@ -8,7 +8,7 @@ import { mount, route } from 'navi'
 import { Router, View, useNavigation, NotFoundBoundary } from 'react-navi'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useGlobalState } from './state';
-import { loginRoute } from './login';
+import { loginRoute } from './wallet/login';
 
 
 const useStyles = makeStyles((theme: Theme) => ({

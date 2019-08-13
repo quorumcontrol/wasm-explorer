@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 
 import { Paper, Container, Grid, Theme, AppBar, Toolbar, Typography, TextField, InputAdornment } from '@material-ui/core';
-import Explorer from './explorer';
+import Explorer, { fetchTree } from './explorer';
 import { makeStyles } from '@material-ui/styles';
 import SearchIcon from '@material-ui/icons/Search';
-import { debounce } from 'ts-debounce';
+import { mount, route } from 'navi'
+import { Router, View, useNavigation, NotFoundBoundary } from 'react-navi'
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -27,46 +30,104 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-export const Layout = () => {
-    const classes = useStyles();
-    let [search,setSearch] = useState("")
+const routes =
+    mount({
+        '/': route({
+            view: <div>Awaiting your DID</div>
+        }),
+        '/chaintrees/:did': route(async (req) => {
+            const did = req.params.did
+            const fetchTreeResult = await fetchTree(did)
+            let path = [""]
+            let decodedCbor
+            if (req.params.path) {
+                path = req.params.path.split("/")
+            }
+            if (fetchTreeResult.tree !== undefined) {
+                const resolveResult = await fetchTreeResult.tree.resolve(path)
+                if (resolveResult.value !== undefined) {
+                    decodedCbor = resolveResult.value
+                }
+            }
+            return {
+                view: <Explorer did={did} path={path} fetchTreeResult={fetchTreeResult} decodedCbor={decodedCbor} />
+            }
+        })
 
-    setSearch = debounce(setSearch, 200)
+    })
+
+export const NavBar = () => {
+    const classes = useStyles();
+    let [search, setSearch] = useState("")
+    let navigation = useNavigation()
+
+    const handleSubmit = (evt: React.FormEvent) => {
+        evt.preventDefault()
+        if (!!search && search !== "") {
+            navigation.navigate("/chaintrees/" + search)
+        }
+    }
 
     return (
-        <Container maxWidth="md">
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography className={classes.title} variant="h6" noWrap>
-                        ChainTree Explorer
-                    </Typography>
-                    <TextField 
-                        className={classes.search} 
-                        id="did" 
-                        label="search..." 
-                        type="search" 
+        <AppBar position="static">
+            <Toolbar>
+                <Typography className={classes.title} variant="h6" noWrap>
+                    ChainTree Explorer
+            </Typography>
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        className={classes.search}
+                        id="did"
+                        label="search..."
+                        type="search"
                         variant="filled"
                         InputProps={{
                             startAdornment: <InputAdornment position="start"><SearchIcon className={classes.searchIcon} /></InputAdornment>,
                         }}
-                        onChange={(evt)=> {
+                        value={search}
+                        onChange={(evt) => {
                             setSearch(evt.target.value)
-                        }}/>
-                </Toolbar>
-            </AppBar>
-            <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-            >
-                <Grid item xs={12} spacing={2}>
-                    <Paper className={classes.root}>
-                        <Explorer did={search}></Explorer>
-                    </Paper>
+                        }} />
+                </form>
+            </Toolbar>
+        </AppBar>
+    )
+}
+
+export const Layout = () => {
+    const classes = useStyles();
+
+
+    return (
+        <Container maxWidth="md">
+
+            <Router routes={routes}>
+                <NavBar />
+                <Grid
+                    container
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
+                    spacing={2}
+                >
+                    <Grid item xs={12} >
+                        <Paper className={classes.root}>
+                            <Suspense fallback={<CircularProgress />}>
+                                <NotFoundBoundary render={renderNotFound}>
+                                    <View />
+                                </NotFoundBoundary>
+                            </Suspense>
+                        </Paper>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Router>
 
         </Container>
+    )
+}
+
+const renderNotFound = (err: Error) => {
+    return (
+        <h1>NotFound</h1>
     )
 }

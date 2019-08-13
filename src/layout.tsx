@@ -9,6 +9,7 @@ import { Router, View, useNavigation, NotFoundBoundary } from 'react-navi'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useGlobalState } from './state';
 import { loginRoute } from './wallet/login';
+import { walletRoute } from './wallet/wallet';
 
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -39,6 +40,7 @@ const routes =
         }),
         '/chaintrees/:did': explorerRoute,
         '/login': loginRoute,
+        "/wallet": walletRoute,
     })
 
 export const NavBar = () => {
@@ -81,7 +83,7 @@ export const NavBar = () => {
 
 export const Layout = () => {
     const classes = useStyles();
-    const [userTree,_] = useGlobalState("userTree")
+    const [userTree, _] = useGlobalState("userTree")
 
     return (
         <Container maxWidth="md">

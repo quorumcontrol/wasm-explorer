@@ -1,6 +1,6 @@
 import React from 'react'
 import {mount,route, redirect, map} from 'navi'
-import {useGlobalState} from '../state'
+import {useGlobalState, globalStorageStarted} from '../state'
 import {ChainTree} from 'tupelo-wasm-sdk'
 
 /**
@@ -8,6 +8,7 @@ import {ChainTree} from 'tupelo-wasm-sdk'
  */
 export const walletRoute = mount({
     "/": map(async (req, userTreeObj) => {
+            await globalStorageStarted
             const userTree = userTreeObj as ChainTree
             if (userTree.id == undefined) {
                 return redirect("/login")

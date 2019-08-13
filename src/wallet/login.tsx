@@ -3,7 +3,7 @@ import { route,mount } from 'navi';
 import { TextField, Button, Grid, Typography, CircularProgress } from '@material-ui/core';
 import { EcdsaKey, Tupelo, getDefault, ChainTree, setOwnershipTransaction, setDataTransaction } from 'tupelo-wasm-sdk';
 import { useNavigation } from 'react-navi';
-import { useGlobalState } from '../state';
+import { dispatch } from '../state';
 
 export const usernameKey = "/_crazywallet/username"
 const namespace =  Buffer.from("_crazywallet-dev")
@@ -78,8 +78,6 @@ export const loginRoute = mount({
  * When the username is unavailable
  */
 const UsernameUnavailable = ({userName, tree}:{userName:string, tree:ChainTree}) => {
-    const [_userTree,setUserTree] = useGlobalState("userTree")
-    const [_userKey,setUserKey] = useGlobalState("userKey")
     const navigation = useNavigation()
 
     const [loading,setLoading] = useState(false)
@@ -87,17 +85,24 @@ const UsernameUnavailable = ({userName, tree}:{userName:string, tree:ChainTree})
     const [badPassword,setBadPassword] = useState(false)
 
     const handleSubmit = async (evt:React.FormEvent)=> {
+        evt.preventDefault()
+
         setLoading(true)
         setBadPassword(false)
-        evt.preventDefault()
         let secureKey = await EcdsaKey.passPhraseKey(Buffer.from(password), Buffer.from(userName))
         let secureAddr = await Tupelo.ecdsaPubkeyToAddress(secureKey.publicKey)
         let resolveResp = await tree.resolve(["tree", "_tupelo", "authentications"])
         setLoading(false)
         let auths:string[] = resolveResp.value
         if (auths.includes(secureAddr)) {
-            setUserKey(secureKey)
-            setUserTree(tree)
+            dispatch({
+                type:"setKey",
+                userKey: secureKey,
+            })
+            dispatch({
+                type:"setTree",
+                userTree: tree,
+            })
             navigation.navigate("/wallet")
         } else {
             setBadPassword(true)
@@ -130,9 +135,6 @@ const UsernameUnavailable = ({userName, tree}:{userName:string, tree:ChainTree})
  * warp wallet technique (Brain wallet).
  */
 const UsernameAvailable = ({userName}:{userName:string}) => {
-
-    const [_userTree,setUserTree] = useGlobalState("userTree")
-    const [_userKey,setUserKey] = useGlobalState("userKey")
     const navigation = useNavigation()
     const [password,setPassword] = useState("")
     const [loading,setLoading] = useState(false)
@@ -159,8 +161,14 @@ const UsernameAvailable = ({userName}:{userName:string}) => {
                 setDataTransaction(usernameKey, userName),
         ])
         tree.key = secureKey
-        setUserKey(secureKey)
-        setUserTree(tree)
+        dispatch({
+            type:"setKey",
+            userKey: secureKey,
+        })
+        dispatch({
+            type:"setTree",
+            userTree: tree,
+        })
         setLoading(false)
         navigation.navigate("/wallet")
     }

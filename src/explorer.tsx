@@ -1,8 +1,14 @@
 import React from 'react';
 import { getDefault, ChainTree } from 'tupelo-wasm-sdk';
-import { Typography } from '@material-ui/core';
-import { useAsync } from 'react-async-hook';
+import { Typography, makeStyles, Theme } from '@material-ui/core';
+import {Link} from 'react-navi'
 import NodeDisplay from './nodedisplay';
+
+const useStyles = makeStyles((theme: Theme) => ({
+    pathDisplay: {
+        padding: theme.spacing(0, 0.5),
+    },
+}));
 
 interface IFetchTreeResult {
     tree?:ChainTree
@@ -10,7 +16,7 @@ interface IFetchTreeResult {
     message?:string
 }
 
-const fetchTree = async (did: string):Promise<IFetchTreeResult> => {
+export const fetchTree = async (did: string):Promise<IFetchTreeResult> => {
     if (did === "") {
         return {
             found: false,
@@ -38,15 +44,32 @@ const fetchTree = async (did: string):Promise<IFetchTreeResult> => {
     }
 }
 
-const Explorer = ({ did }: { did: string }) => {
-    const asyncTree = useAsync(fetchTree, [did])
 
-    let result = asyncTree.result
+const PathRenderer = ({ did, path }: { did:string, path: string[] }) => {
+    const classes = useStyles()
 
     return (
         <div>
-        {asyncTree.loading && <div>Loading...</div>}
-        {asyncTree.error && <div>Error: {asyncTree.error.message}</div>}
+        Path: 
+        {path.map((val: string, i: number) => {
+            return (
+                <Link
+                    key={i}
+                    className={classes.pathDisplay}
+                    href={"/chaintrees/" + did + "?path=" + path.slice(0,i+1).join("/")}
+                >
+                    {val}/
+            </Link>)
+        })}</div>
+    )
+}
+
+const Explorer = ({ did, fetchTreeResult, path, decodedCbor }: { did:string, fetchTreeResult: IFetchTreeResult, path:string[], decodedCbor:any }) => {
+
+    let result = fetchTreeResult
+
+    return (
+        <div>
         {result && (result.found === undefined || !result.found) && (
             <div>
                 <Typography variant="h6">{did}</Typography>
@@ -56,7 +79,9 @@ const Explorer = ({ did }: { did: string }) => {
         {(result && result.tree !== undefined) && (
             <div>
             <Typography variant="h6">{did}</Typography>
-            <NodeDisplay tree={result.tree}/>
+            <p>tip: {result.tree.tip.toString()}</p>
+            <PathRenderer did={did} path={path}/>
+            <NodeDisplay decodedCbor={decodedCbor} path={path} did={did}/>
             </div>
         )}
         </div>

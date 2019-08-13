@@ -1,30 +1,16 @@
 import React, { useState } from 'react';
-
+import {Link} from 'react-navi'
 import { ChainTree } from 'tupelo-wasm-sdk';
-import { useAsync } from 'react-async-hook';
-import { Table, TableHead, TableBody, TableRow, TableCell, Link, makeStyles, Theme } from '@material-ui/core';
+import { Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
 
-const resolveTree = (tree: ChainTree, path: string[]) => {
-    return tree.resolve(path)
-}
-
-
-const useStyles = makeStyles((theme: Theme) => ({
-    pathDisplay: {
-        padding: theme.spacing(0, 0.5),
-    },
-}));
-
-const NodeRow = ({ onNavigate, label, value, path }: { path: string[], onNavigate: Function, label: string, value: any }) => {
-
+const NodeRow = ({ label, value, path, did }: { did:string, path: string[], label: string, value: any }) => {
     let display
     if (value.constructor.name === "CID") {
         display = (
             <Link
-                component="button"
-                onClick={() => { onNavigate(path.concat(label)) }}
+                href={"/chaintrees/" + did + "?path="+path.concat(label).join("/")}
             >
-                Cid: {value.toString()}
+                CID: {value.toString()}
             </Link>
         )
     } else {
@@ -41,45 +27,10 @@ const NodeRow = ({ onNavigate, label, value, path }: { path: string[], onNavigat
     )
 }
 
-const PathRenderer = ({ path, onNavigate }: { onNavigate: Function, path: string[] }) => {
-    const classes = useStyles()
-
+const NodeExplorer = ({ decodedCbor, path, did }: { decodedCbor: any, path:string[],did:string }) => {
     return (
         <div>
-        Path: 
-        {path.map((val: string, i: number) => {
-            return (
-                <Link
-                    key={i}
-                    className={classes.pathDisplay}
-                    component="button"
-                    onClick={() => { onNavigate(path.slice(0, i + 1)) }}
-                >
-                    {val}/
-            </Link>)
-        })}</div>
-    )
-}
-
-const NodeExplorer = ({ tree }: { tree: ChainTree }) => {
-    const [path, setPath] = useState([""])
-    const asyncRoot = useAsync(resolveTree, [tree, path])
-
-    let result = asyncRoot.result
-
-    const handleNavigation = (newPath: string[]) => {
-        console.log("newPath", newPath)
-        setPath(newPath)
-    }
-
-    return (
-        <div>
-            {asyncRoot.loading && <div>Loading</div>}
-            {asyncRoot.error && <div>Error: {asyncRoot.error.message}</div>}
-            {result !== undefined && result.value !== undefined && (
                 <div>
-                    <p>tip: {tree.tip.toString()}</p>
-                    <PathRenderer path={path} onNavigate={handleNavigation} />
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -88,18 +39,14 @@ const NodeExplorer = ({ tree }: { tree: ChainTree }) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.keys(result.value).map((k: string, i: number) => {
-                                if (result === undefined) {
-                                    throw new Error("can't have a result negative")
-                                }
+                            {Object.keys(decodedCbor).map((k: string, i: number) => {
                                 return (
-                                    <NodeRow key={i} path={path} onNavigate={(newPath: string[]) => { handleNavigation(newPath) }} label={k} value={result.value[k]} />
+                                    <NodeRow key={i} label={k} path={path} did={did} value={decodedCbor[k]} />
                                 )
                             })}
                         </TableBody>
                     </Table>
                 </div>
-            )}
         </div>
     )
 }

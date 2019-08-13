@@ -17,7 +17,7 @@
     "react-hooks-global-state": "^0.14.0",
     "react-navi": "^0.13.5",
     "react-scripts": "3.1.0",
-    "tupelo-wasm-sdk": "file:../tupelo-wasm-sdk",
+    "tupelo-wasm-sdk": "0.0.2",
     "typeface-roboto": "0.0.75",
     "typescript": "3.5.3"
   },

@@ -7,6 +7,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import { mount, route } from 'navi'
 import { Router, View, useNavigation, NotFoundBoundary } from 'react-navi'
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { useGlobalState } from './state';
+import { loginRoute } from './login';
 
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -36,6 +38,7 @@ const routes =
             view: <div>Awaiting your DID</div>
         }),
         '/chaintrees/:did': explorerRoute,
+        '/login': loginRoute,
     })
 
 export const NavBar = () => {
@@ -78,12 +81,12 @@ export const NavBar = () => {
 
 export const Layout = () => {
     const classes = useStyles();
-
+    const [userTree,_] = useGlobalState("userTree")
 
     return (
         <Container maxWidth="md">
 
-            <Router routes={routes}>
+            <Router routes={routes} context={userTree}>
                 <NavBar />
                 <Grid
                     container

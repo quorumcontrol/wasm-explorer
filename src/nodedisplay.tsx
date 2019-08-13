@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const NodeRow = ({ label, value, path, did }: { did: string, path: string[], label: string, value: any }) => {
     const classes = useStyles()
     let display
-    if (value.constructor.name === "CID") {
+    if (value && value.constructor && value.constructor.name === "CID") {
         display = (
             <Link
                 href={"/chaintrees/" + did + "?path=" + path.concat(label).join("/")}

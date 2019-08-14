@@ -50,7 +50,7 @@ export const { GlobalStateProvider, dispatch, useGlobalState } = createStore(per
 
 async function setStoredState() {
     let keyString = sessionStorage.getItem('userKey')
-    if (!keyString || keyString == "") {
+    if (!keyString || keyString === "") {
         resolve()
         return
     }
@@ -67,6 +67,7 @@ async function setStoredState() {
     let tree = new ChainTree({
         tip: tip,
         store: community.blockservice,
+        key:key,
     })
     dispatch({
         type: "setKey",

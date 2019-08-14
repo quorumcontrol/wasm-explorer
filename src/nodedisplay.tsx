@@ -36,7 +36,6 @@ const NodeRow = ({ label, value, path, did }: { did: string, path: string[], lab
 
 const NodeExplorer = ({ decodedCbor, path, did }: { decodedCbor: any, path: string[], did: string }) => {
     return (
-        <div>
             <Table>
                 <TableHead>
                     <TableRow>
@@ -52,7 +51,6 @@ const NodeExplorer = ({ decodedCbor, path, did }: { decodedCbor: any, path: stri
                     })}
                 </TableBody>
             </Table>
-        </div>
     )
 }
 

@@ -86,7 +86,7 @@ export const Layout = () => {
     const [userTree, _] = useGlobalState("userTree")
 
     return (
-        <Container maxWidth="md">
+        <Container maxWidth="lg">
 
             <Router routes={routes} context={userTree}>
                 <NavBar />
@@ -99,11 +99,11 @@ export const Layout = () => {
                 >
                     <Grid item xs={12} >
                         <Paper className={classes.root}>
-                            <Suspense fallback={<CircularProgress />}>
-                                <NotFoundBoundary render={renderNotFound}>
+                            <NotFoundBoundary render={renderNotFound}>
+                                <Suspense fallback={<CircularProgress />}>
                                     <View />
-                                </NotFoundBoundary>
-                            </Suspense>
+                                </Suspense>
+                            </NotFoundBoundary>
                         </Paper>
                     </Grid>
                 </Grid>

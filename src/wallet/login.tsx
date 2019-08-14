@@ -34,11 +34,11 @@ const userTree = async (userName:string) => {
     try {
         tip = await community.getTip(did)
     } catch(e) {
-        if (e == "not found") {
+        if (e === "not found") {
             return null
         }
     }
-    if (tip == undefined) {
+    if (tip === undefined) {
         throw new Error("tip was undefined")
     }
     const tree = new ChainTree({

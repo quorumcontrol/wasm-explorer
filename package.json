@@ -28,7 +28,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "cp:wasm": "cp ./node_modules/tupelo-wasm-sdk/src/js/go/tupelo.wasm ./public/"
+    "cp:wasm": "cp ./node_modules/tupelo-wasm-sdk/lib/js/go/tupelo.wasm ./public/"
   },
   "eslintConfig": {
     "extends": "react-app"

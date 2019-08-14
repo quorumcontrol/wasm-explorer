@@ -8,20 +8,21 @@ const tokenPath = ["tree", "_tupelo", "tokens"];
 
 export const NodeRow = ({tree,tokenName}:{tree:ChainTree, tokenName:string})=> {
     const [balance,setBalance] = useState(0)
-    const [max,setMax] = useState(0)
+    const [max,setMax] = useState(null)
     const [loading,setLoading] = useState(true)
     const [loaded,setLoaded] = useState(false)
     const [mintDialogOpen, setMintDialogOpen] = useState(false)
     const [sendDialogOpen, setSendDialogOpen] = useState(false)
 
     const loadInfo = async ()=> {
+        setLoaded(true)
+
         const tokenInfoPath = tokenPath.concat(tokenName)
         const tokenInfoResp = await tree.resolve(tokenInfoPath)
         if (tokenInfoResp.value.monetaryPolicy) {
             const monetaryPolicy = await tree.resolve(tokenInfoPath.concat("monetaryPolicy"))
             setMax(monetaryPolicy.value['maximum'])
         }
-        setLoaded(true)
 
         setBalance(tokenInfoResp.value['balance'])
         setLoading(false)

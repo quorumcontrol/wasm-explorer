@@ -1,10 +1,11 @@
-import React, { useState, useEffect, MouseEvent } from 'react'
+import React, { useState, useEffect } from 'react'
 import { mount, route, redirect, map } from 'navi'
-import { globalStorageStarted, useGlobalState } from '../state'
-import { ChainTree, getDefault, establishTokenTransaction } from 'tupelo-wasm-sdk'
+import { globalStorageStarted } from '../state'
+import { ChainTree } from 'tupelo-wasm-sdk'
 import TokenDisplay from './tokendisplay'
-import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Grid, DialogContentText, CircularProgress } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import ReceiveTokenDialog from './receivetokendialog'
+import EstablishTokenDialog from './establishtokendialog'
 /**
  * Define the navi routes 
  */
@@ -12,7 +13,7 @@ export const walletRoute = mount({
     "/": map(async (req, userTreeObj) => {
         await globalStorageStarted
         const userTree = userTreeObj as ChainTree
-        if (userTree.id == undefined) {
+        if (userTree.id === undefined) {
             return redirect("/login")
         }
         return route({
@@ -21,6 +22,22 @@ export const walletRoute = mount({
     }),
 });
 
+
+/**
+ * Demos all the coin transactions:
+ * EstablishToken,MintToken,SendToken,ReceiveToken
+ * A full flow of creating and then sending a token is this:
+ * 
+ * * Establish the token with a monetary policy
+ * * Mint some tokens (less than the maximum defined in monetaryPolicy)
+ * * Send token (that you have a balance of)
+ * * copy the payload generated from sending the token and send (out-of-band) to receiver
+ * 
+ * Then the receiver
+ * * Receive token transaction using the sent payload
+ * 
+ * Note the payload does not need to be kept secure, it is tied directly to the receiving chaintree.
+ */
 const WalletPage = ({ tree }: { tree: ChainTree }) => {
     const [dialogOpen, setDialogOpen] = useState(false)
     const [receiveDialogOpen,setReceiveDialogOpen] = useState(false)
@@ -55,68 +72,5 @@ const WalletPage = ({ tree }: { tree: ChainTree }) => {
             <EstablishTokenDialog open={dialogOpen} onClose={handleClose} tree={tree}/>
             <ReceiveTokenDialog open={receiveDialogOpen} onClose={handleClose} tree={tree}/>
         </div>
-    )
-}
-
-const EstablishTokenDialog = ({open, onClose, tree}:{open:boolean, onClose:() => void, tree:ChainTree})=> {
-
-    const [tokenName, setTokenName] = useState("")
-    const [maxAmount, setMaxAmount] = useState(0)
-    const [loading,setLoading] = useState(false)
-
-    const handleSubmit = async ()=> {
-        if (tree == undefined) {
-            throw new Error("userTree is undefined")
-        }
-        setLoading(true)
-        const community = await getDefault()
-        await community.playTransactions(tree, [establishTokenTransaction(tokenName, maxAmount)])
-        _onClose()
-    }
-
-    const _onClose = (evt:MouseEvent|void)=> {
-        setTokenName("")
-        setMaxAmount(0)
-        setLoading(false)
-        onClose()
-    }
-
-    return (
-        <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Establish Token</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Establish a token with a name and a monetary policy.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Token Name"
-                        fullWidth
-                        onChange={(evt)=> {setTokenName(evt.target.value)}}
-                        value={tokenName}
-                    />
-                    <TextField
-                        margin="dense"
-                        id="maximum"
-                        label="Maximum Amount"
-                        type="number"
-                        fullWidth
-                        onChange={(evt)=> {setMaxAmount(parseInt(evt.target.value, 10))}}
-                        value={maxAmount}
-                    />
-                </DialogContent>
-                {loading ? <CircularProgress/> : 
-                <DialogActions>
-                    <Button onClick={_onClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleSubmit} color="primary">
-                        Establish
-                    </Button>
-                </DialogActions>
-                }
-            </Dialog>
     )
 }

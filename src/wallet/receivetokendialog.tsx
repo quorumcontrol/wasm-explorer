@@ -3,17 +3,21 @@ import {  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, 
 import { ChainTree, getDefault, receiveTokenTransactionFromPayload } from 'tupelo-wasm-sdk'
 import { TokenPayload } from 'tupelo-messages/transactions/transactions_pb';
 
-const uuidv4:()=>string = require('uuid/v4');
-
+/**
+ * Receive token is used on the *receiving* side of a token transaction. The sender does a send transaction and then 
+ * (out of band) sends the payload to the receiver. The receiver can then do a receive coin transaction.
+ */
 export const ReceiveTokenDialog = ({open, onClose, tree}:{open:boolean, onClose:() => void, tree:ChainTree})=> {
     const [code, setCode] = useState("")
     const [loading,setLoading] = useState(false)
 
     const handleSubmit = async ()=> {
-        if (tree == undefined) {
+        if (tree === undefined) {
             throw new Error("userTree is undefined")
         }
         let tokenPayload = TokenPayload.deserializeBinary(Buffer.from(code, 'base64'))
+        // The receiveTokenTransactionFromPayload function is a helper to create a transaction
+        // from a TokenPayload
         let tx = receiveTokenTransactionFromPayload(tokenPayload)
 
         setLoading(true)

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import {  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, Table, TableHead, TableBody, TableRow, TableCell, CircularProgress, Button } from '@material-ui/core';
-import { ChainTree, getDefault, mintTokenTransaction, sendTokenTransaction } from 'tupelo-wasm-sdk'
+import {  Table, TableHead, TableBody, TableRow, TableCell, CircularProgress, Button } from '@material-ui/core';
+import { ChainTree } from 'tupelo-wasm-sdk'
 import SendTokenDialog from './sendtokendialog'
 import MintTokenDialog from './minttokendialog'
 

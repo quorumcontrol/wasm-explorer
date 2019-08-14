@@ -83,7 +83,7 @@ export const NavBar = () => {
 
 export const Layout = () => {
     const classes = useStyles();
-    const [userTree, _] = useGlobalState("userTree")
+    const [userTree] = useGlobalState("userTree")
 
     return (
         <Container maxWidth="lg">

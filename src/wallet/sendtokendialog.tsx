@@ -23,9 +23,10 @@ export const SendTokenDialog = ({ open, onClose, tree, tokenName }: { tokenName:
         setLoading(true)
         const uuid = uuidv4()
         const community = await getDefault()
-        const canonicalName = await tokenCanonicalName(tree, tokenName)
+        // const canonicalName = await tokenCanonicalName(tree, tokenName)
+        console.log('tokenname: ', tokenName)
 
-        const payload = await community.sendTokenAndGetPayload(tree, sendTokenTransaction(uuid, canonicalName, amount, destination))
+        const payload = await community.sendTokenAndGetPayload(tree, sendTokenTransaction(uuid, tokenName, amount, destination))
         setCode(Buffer.from(payload.serializeBinary()).toString('base64'))
     }
 
@@ -82,7 +83,7 @@ export const SendTokenDialog = ({ open, onClose, tree, tokenName }: { tokenName:
                     Give the following snippet to your send coin receiver:
                 </DialogContentText>
                 <TextareaAutosize>
-                    {code ? code.toJSON() : null}
+                    {code}
                 </TextareaAutosize>
             </DialogContent>
             <DialogActions>

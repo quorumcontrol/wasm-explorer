@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, CircularProgress, Button } from '@material-ui/core';
 import { ChainTree, getDefault, receiveTokenTransactionFromPayload } from 'tupelo-wasm-sdk'
-import { TokenPayload } from 'tupelo-messages';
+import { TokenPayload } from 'tupelo-messages/transactions/transactions_pb';
 
 const uuidv4:()=>string = require('uuid/v4');
 

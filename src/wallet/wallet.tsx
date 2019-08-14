@@ -24,15 +24,25 @@ export const walletRoute = mount({
 const WalletPage = ({ tree }: { tree: ChainTree }) => {
     const [dialogOpen, setDialogOpen] = useState(false)
     const [receiveDialogOpen,setReceiveDialogOpen] = useState(false)
+    const [did,setDid] = useState("")
 
     const handleClose = () => {
         setDialogOpen(false)
         setReceiveDialogOpen(false)
     }
 
+    useEffect(()=> {
+        tree.id().then((id)=> {
+            if (id != null) {
+                setDid(id)
+            }
+        })
+    })
+
     return (
         <div>
             <h1>Wallet</h1>
+            <p>{did}</p>
             <Grid container spacing={2}>
                 <Grid item>
                     <Button variant="outlined" onClick={() => { setDialogOpen(true) }}>Establish Token</Button>
@@ -43,7 +53,7 @@ const WalletPage = ({ tree }: { tree: ChainTree }) => {
             </Grid>
             <TokenDisplay tree={tree}/>
             <EstablishTokenDialog open={dialogOpen} onClose={handleClose} tree={tree}/>
-            <ReceiveTokenDialog open={dialogOpen} onClose={handleClose} tree={tree}/>
+            <ReceiveTokenDialog open={receiveDialogOpen} onClose={handleClose} tree={tree}/>
         </div>
     )
 }

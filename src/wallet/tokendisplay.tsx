@@ -17,11 +17,13 @@ export const NodeRow = ({tree,tokenName}:{tree:ChainTree, tokenName:string})=> {
     const loadInfo = async ()=> {
         const tokenInfoPath = tokenPath.concat(tokenName)
         const tokenInfoResp = await tree.resolve(tokenInfoPath)
-        const monetaryPolicy = await tree.resolve(tokenInfoPath.concat("monetaryPolicy"))
+        if (tokenInfoResp.value.monetaryPolicy) {
+            const monetaryPolicy = await tree.resolve(tokenInfoPath.concat("monetaryPolicy"))
+            setMax(monetaryPolicy.value['maximum'])
+        }
         setLoaded(true)
 
         setBalance(tokenInfoResp.value['balance'])
-        setMax(monetaryPolicy.value['maximum'])
         setLoading(false)
     }
 

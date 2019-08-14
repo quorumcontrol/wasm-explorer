@@ -17,9 +17,11 @@
     "react-hooks-global-state": "^0.14.0",
     "react-navi": "^0.13.5",
     "react-scripts": "3.1.0",
-    "tupelo-wasm-sdk": "0.0.2",
+    "tupelo-messages": "^0.5.0-rc4",
+    "tupelo-wasm-sdk": "0.0.6",
     "typeface-roboto": "0.0.75",
-    "typescript": "3.5.3"
+    "typescript": "3.5.3",
+    "uuid": "^3.3.2"
   },
   "scripts": {
     "start": "react-scripts start",

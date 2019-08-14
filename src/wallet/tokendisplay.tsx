@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { ChainTree, getDefault, mintTokenTransaction } from 'tupelo-wasm-sdk'
 import {  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, Table, TableHead, TableBody, TableRow, TableCell, CircularProgress, Button } from '@material-ui/core';
+import { ChainTree, getDefault, mintTokenTransaction, sendTokenTransaction } from 'tupelo-wasm-sdk'
+import SendTokenDialog from './sendtokendialog'
+import MintTokenDialog from './minttokendialog'
 
 const tokenPath = ["tree", "_tupelo", "tokens"];
 
@@ -10,6 +12,7 @@ export const NodeRow = ({tree,tokenName}:{tree:ChainTree, tokenName:string})=> {
     const [loading,setLoading] = useState(true)
     const [loaded,setLoaded] = useState(false)
     const [mintDialogOpen, setMintDialogOpen] = useState(false)
+    const [sendDialogOpen, setSendDialogOpen] = useState(false)
 
     const loadInfo = async ()=> {
         const tokenInfoPath = tokenPath.concat(tokenName)
@@ -29,8 +32,13 @@ export const NodeRow = ({tree,tokenName}:{tree:ChainTree, tokenName:string})=> {
     })
 
     const handleMintClose = ()=> {
-        setLoaded(false)
         setMintDialogOpen(false)
+        setLoaded(false)
+    }
+
+    const handleSendClose = ()=> {
+        setSendDialogOpen(false)
+        setLoaded(false)
     }
 
     return (
@@ -48,73 +56,15 @@ export const NodeRow = ({tree,tokenName}:{tree:ChainTree, tokenName:string})=> {
                 <Button onClick={()=>{setMintDialogOpen(true)}}>
                     Mint
                 </Button>
-                <Button>
+                <Button onClick={()=>{setSendDialogOpen(true)}}>
                     Send
                 </Button>
-                <Button>
-                    Receive
-                </Button>
                 <MintTokenDialog open={mintDialogOpen} onClose={handleMintClose} tree={tree} tokenName={tokenName}/>
+                <SendTokenDialog open={sendDialogOpen} onClose={handleSendClose} tree={tree} tokenName={tokenName}/>
             </TableCell>
         </TableRow>
     )
 }
-
-
-const MintTokenDialog = ({open, onClose, tree, tokenName}:{tokenName:string, open:boolean, onClose:() => void, tree:ChainTree})=> {
-
-    const [ammount, setAmmount] = useState(0)
-    const [loading,setLoading] = useState(false)
-
-    const handleSubmit = async ()=> {
-        if (tree == undefined) {
-            throw new Error("userTree is undefined")
-        }
-        setLoading(true)
-        const community = await getDefault()
-        await community.playTransactions(tree, [mintTokenTransaction(tokenName, ammount)])
-        _onClose()
-    }
-
-    const _onClose = ()=> {
-        setAmmount(0)
-        setLoading(false)
-        onClose()
-    }
-
-    return (
-        <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Establish Token</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Mint tokens of type {tokenName}
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="amount"
-                        label="Amount"
-                        type="number"
-                        fullWidth
-                        onChange={(evt)=> {setAmmount(parseInt(evt.target.value,10))}}
-                        value={ammount}
-                    />
-                   
-                </DialogContent>
-                {loading ? <CircularProgress/> : 
-                <DialogActions>
-                    <Button onClick={_onClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleSubmit} color="primary">
-                        Mint
-                    </Button>
-                </DialogActions>
-                }
-            </Dialog>
-    )
-}
-
 
 export const TokenList = ({ tree }: { tree: ChainTree }) => {
     const [tokens, setTokens] = useState({});

@@ -4,7 +4,7 @@ import { globalStorageStarted, useGlobalState } from '../state'
 import { ChainTree, getDefault, establishTokenTransaction } from 'tupelo-wasm-sdk'
 import TokenDisplay from './tokendisplay'
 import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Grid, DialogContentText, CircularProgress } from '@material-ui/core';
-
+import ReceiveTokenDialog from './receivetokendialog'
 /**
  * Define the navi routes 
  */
@@ -23,9 +23,11 @@ export const walletRoute = mount({
 
 const WalletPage = ({ tree }: { tree: ChainTree }) => {
     const [dialogOpen, setDialogOpen] = useState(false)
+    const [receiveDialogOpen,setReceiveDialogOpen] = useState(false)
 
     const handleClose = () => {
         setDialogOpen(false)
+        setReceiveDialogOpen(false)
     }
 
     return (
@@ -35,9 +37,13 @@ const WalletPage = ({ tree }: { tree: ChainTree }) => {
                 <Grid item>
                     <Button variant="outlined" onClick={() => { setDialogOpen(true) }}>Establish Token</Button>
                 </Grid>
+                <Grid item>
+                    <Button variant="outlined" onClick={()=>{setReceiveDialogOpen(true)}}>Receive Token</Button>
+                </Grid>
             </Grid>
             <TokenDisplay tree={tree}/>
             <EstablishTokenDialog open={dialogOpen} onClose={handleClose} tree={tree}/>
+            <ReceiveTokenDialog open={dialogOpen} onClose={handleClose} tree={tree}/>
         </div>
     )
 }

@@ -39,7 +39,7 @@ const userTree = async (userName:string) => {
         }
     }
     if (tip === undefined) {
-        throw new Error("tip was undefined")
+        return null
     }
     const tree = new ChainTree({
         store: community.blockservice,

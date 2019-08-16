@@ -1,5 +1,5 @@
 import { createStore } from 'react-hooks-global-state';
-import {EcdsaKey, ChainTree, getDefault} from 'tupelo-wasm-sdk';
+import {EcdsaKey, ChainTree, Community} from 'tupelo-wasm-sdk';
 
 let resolve:Function
 export const globalStorageStarted = new Promise((res)=> {resolve = res})
@@ -61,7 +61,7 @@ async function setStoredState() {
         resolve()
         throw new Error("had a userKey but no user Tree")
     }
-    let community = await getDefault()
+    let community = await Community.getDefault()
     let tip = await community.getTip(userTreeDid)
 
     let tree = new ChainTree({

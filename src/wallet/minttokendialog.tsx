@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, CircularProgress, Button } from '@material-ui/core';
-import { ChainTree, getDefault, mintTokenTransaction } from 'tupelo-wasm-sdk'
+import { ChainTree, Community, mintTokenTransaction } from 'tupelo-wasm-sdk'
 
 /**
  * Mint token is really simple, just take a tokenName and ammount and create it.
@@ -16,7 +16,7 @@ export const MintTokenDialog = ({ open, onClose, tree, tokenName }: { tokenName:
             throw new Error("userTree is undefined")
         }
         setLoading(true)
-        const community = await getDefault()
+        const community = await Community.getDefault()
         await community.playTransactions(tree, [mintTokenTransaction(tokenName, amount)])
         _onClose()
     }

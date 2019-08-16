@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, CircularProgress, Button } from '@material-ui/core';
-import { ChainTree, getDefault, receiveTokenTransactionFromPayload } from 'tupelo-wasm-sdk'
+import { ChainTree, Community, receiveTokenTransactionFromPayload } from 'tupelo-wasm-sdk'
 import { TokenPayload } from 'tupelo-messages/transactions/transactions_pb';
 
 /**
@@ -21,7 +21,7 @@ export const ReceiveTokenDialog = ({open, onClose, tree}:{open:boolean, onClose:
         let tx = receiveTokenTransactionFromPayload(tokenPayload)
 
         setLoading(true)
-        const community = await getDefault()
+        const community = await Community.getDefault()
         await community.playTransactions(tree, [tx])
         _onClose()
     }

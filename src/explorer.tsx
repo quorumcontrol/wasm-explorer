@@ -1,9 +1,10 @@
 import React from 'react';
-import { Community, ChainTree } from 'tupelo-wasm-sdk';
+import { ChainTree } from 'tupelo-wasm-sdk';
 import { Typography, makeStyles, Theme } from '@material-ui/core';
 import {Link} from 'react-navi'
 import NodeDisplay from './nodedisplay';
 import { route } from 'navi'
+import { getCommunity } from './community';
 
 
 export const explorerRoute = route(async (req) => {
@@ -44,7 +45,7 @@ export const fetchTree = async (did: string):Promise<IFetchTreeResult> => {
             found: false,
         }
     }
-    const community = await Community.getDefault()
+    const community = await getCommunity()
 
     try {
         const tip = await community.getTip(did)

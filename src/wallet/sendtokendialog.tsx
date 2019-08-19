@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, CircularProgress, Button } from '@material-ui/core';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
-import { ChainTree, Community, sendTokenTransaction } from 'tupelo-wasm-sdk'
+import { ChainTree, sendTokenTransaction } from 'tupelo-wasm-sdk'
+import { getCommunity } from '../community';
 
 const uuidv4: () => string = require('uuid/v4');
 
@@ -25,7 +26,7 @@ export const SendTokenDialog = ({ open, onClose, tree, tokenName }: { tokenName:
         setLoading(true)
         //sendId must be unique to the receiving chaintree. Here we just use a globally unique uuid.
         const uuid = uuidv4()
-        const community = await Community.getDefault()
+        const community = await getCommunity()
         // const canonicalName = await tokenCanonicalName(tree, tokenName)
         console.log('tokenname: ', tokenName)
     

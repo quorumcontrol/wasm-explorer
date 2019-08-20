@@ -104,7 +104,7 @@ const UsernameUnavailable = ({userName, tree}:{userName:string, tree:ChainTree})
                 type:"setTree",
                 userTree: tree,
             })
-            navigation.navigate("wallet")
+            navigation.navigate("/wallet")
         } else {
             setBadPassword(true)
         }
@@ -171,7 +171,7 @@ const UsernameAvailable = ({userName}:{userName:string}) => {
             userTree: tree,
         })
         setLoading(false)
-        navigation.navigate("wallet")
+        navigation.navigate("/wallet")
     }
 
     const handleSubmit = (evt:React.FormEvent) => {
@@ -209,7 +209,7 @@ export const RootLoginPage = () => {
 
     const handleSubmit = (evt:React.FormEvent) => {
         evt.preventDefault()
-        navigation.navigate("login/available/" + username)
+        navigation.navigate("/login/available/" + username)
     }
 
     return (

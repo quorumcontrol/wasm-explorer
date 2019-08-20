@@ -51,7 +51,7 @@ export const NavBar = () => {
     const handleSubmit = (evt: React.FormEvent) => {
         evt.preventDefault()
         if (!!search && search !== "") {
-            navigation.navigate("/chaintrees/" + search)
+            navigation.navigate("chaintrees/" + search)
         }
     }
 
@@ -88,7 +88,7 @@ export const Layout = () => {
     return (
         <Container maxWidth="lg">
 
-            <Router routes={routes} context={userTree}>
+            <Router routes={routes} context={userTree} basename={window.location.pathname.split("/")[1]}>
                 <NavBar />
                 <Grid
                     container

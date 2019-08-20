@@ -10,7 +10,29 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { useGlobalState } from './state';
 import { loginRoute } from './wallet/login';
 import { walletRoute } from './wallet/wallet';
+import { createHashHistory } from 'history';
 
+import 'tupelo-wasm-sdk' // in order to bring in the Go global
+declare const Go: any;
+
+const getSubDirectory = () => {
+    const firstPath = window.location.pathname.split("/")
+    if (firstPath.length > 0) {
+        if (firstPath[1] === 'ipfs') {
+            return [firstPath[1], firstPath[2]].join("/")
+        } else {
+            return firstPath[1]
+        }
+    }
+    return ''
+}
+
+const subDirectory = getSubDirectory()
+
+console.log("setting wasmpath to: ", "/" + subDirectory + "/tupelo.wasm")
+if (subDirectory !== '') {
+    Go.wasmPath = "/" + subDirectory + "/tupelo.wasm"
+}
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -88,7 +110,10 @@ export const Layout = () => {
     return (
         <Container maxWidth="lg">
 
-            <Router routes={routes} context={userTree} basename={window.location.pathname.split("/")[1]}>
+            <Router 
+                routes={routes} 
+                context={userTree} 
+                history={createHashHistory()}>
                 <NavBar />
                 <Grid
                     container

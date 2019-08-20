@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
 import {  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, CircularProgress, Button } from '@material-ui/core';
-import { ChainTree, Community, receiveTokenTransactionFromPayload } from 'tupelo-wasm-sdk'
+import { ChainTree, receiveTokenTransactionFromPayload } from 'tupelo-wasm-sdk'
 import { TokenPayload } from 'tupelo-messages/transactions/transactions_pb';
+import { getCommunity } from '../community';
 
 /**
  * Receive token is used on the *receiving* side of a token transaction. The sender does a send transaction and then 
@@ -21,7 +22,7 @@ export const ReceiveTokenDialog = ({open, onClose, tree}:{open:boolean, onClose:
         let tx = receiveTokenTransactionFromPayload(tokenPayload)
 
         setLoading(true)
-        const community = await Community.getDefault()
+        const community = await getCommunity()
         await community.playTransactions(tree, [tx])
         _onClose()
     }

@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, CircularProgress, Button } from '@material-ui/core';
-import { ChainTree, Community, establishTokenTransaction } from 'tupelo-wasm-sdk'
+import { ChainTree, establishTokenTransaction } from 'tupelo-wasm-sdk'
+import { getCommunity } from '../community';
 
 /**
  * Establishing a token allows you to mint them. It is done before a mint because it allows you to set a monetary
@@ -18,7 +19,7 @@ export const EstablishTokenDialog = ({open, onClose, tree}:{open:boolean, onClos
             throw new Error("userTree is undefined")
         }
         setLoading(true)
-        const community = await Community.getDefault()
+        const community = await getCommunity()
         await community.playTransactions(tree, [establishTokenTransaction(tokenName, maxAmount)])
         _onClose()
     }

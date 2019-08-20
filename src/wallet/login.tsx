@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { route,mount } from 'navi';
 import { TextField, Button, Grid, Typography, CircularProgress } from '@material-ui/core';
-import { EcdsaKey, Tupelo, Community, ChainTree, setOwnershipTransaction, setDataTransaction } from 'tupelo-wasm-sdk';
+import { EcdsaKey, Tupelo, ChainTree, setOwnershipTransaction, setDataTransaction } from 'tupelo-wasm-sdk';
 import { useNavigation } from 'react-navi';
 import { dispatch } from '../state';
+import { getCommunity } from '../community';
 
 export const usernameKey = "/_crazywallet/username"
 const namespace =  Buffer.from("_crazywallet-dev")
@@ -29,7 +30,7 @@ const userTree = async (userName:string) => {
     // Convert the key to a tupelo DID (ChainTree id)
     const did = await Tupelo.ecdsaPubkeyToDid(key.publicKey)
 
-    const community = await Community.getDefault()
+    const community = await getCommunity()
     let tip
     try {
         tip = await community.getTip(did)
@@ -151,7 +152,7 @@ const UsernameAvailable = ({userName}:{userName:string}) => {
         const secureKey = await EcdsaKey.passPhraseKey(Buffer.from(password), Buffer.from(userName))
         const secureKeyAddress = await Tupelo.ecdsaPubkeyToAddress(secureKey.publicKey)
         
-        const community = await Community.getDefault()
+        const community = await getCommunity()
         const tree = await ChainTree.newEmptyTree(community.blockservice, insecureKey)
 
         await community.playTransactions(tree, [

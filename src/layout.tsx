@@ -16,6 +16,7 @@ import 'tupelo-wasm-sdk' // in order to bring in the Go global
 declare const Go: any;
 
 const subDirectory = window.location.pathname
+console.log("subDirectory ", subDirectory)
 
 if (subDirectory !== '/') {
     console.log("setting wasmpath to: ",  subDirectory + "/tupelo.wasm")

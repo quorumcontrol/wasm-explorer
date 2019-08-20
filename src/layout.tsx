@@ -15,23 +15,12 @@ import { createHashHistory } from 'history';
 import 'tupelo-wasm-sdk' // in order to bring in the Go global
 declare const Go: any;
 
-const getSubDirectory = () => {
-    const firstPath = window.location.pathname.split("/")
-    if (firstPath.length > 0) {
-        if (firstPath[1] === 'ipfs') {
-            return [firstPath[1], firstPath[2]].join("/")
-        } else {
-            return firstPath[1]
-        }
-    }
-    return ''
-}
+const subDirectory = window.location.pathname
+console.log("subDirectory ", subDirectory)
 
-const subDirectory = getSubDirectory()
-
-console.log("setting wasmpath to: ", "/" + subDirectory + "/tupelo.wasm")
-if (subDirectory !== '') {
-    Go.wasmPath = "/" + subDirectory + "/tupelo.wasm"
+if (subDirectory !== '/') {
+    console.log("setting wasmpath to: ",  subDirectory + "/tupelo.wasm")
+    Go.wasmPath = subDirectory + "/tupelo.wasm"
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -73,7 +62,7 @@ export const NavBar = () => {
     const handleSubmit = (evt: React.FormEvent) => {
         evt.preventDefault()
         if (!!search && search !== "") {
-            navigation.navigate("chaintrees/" + search)
+            navigation.navigate("/chaintrees/" + search)
         }
     }
 

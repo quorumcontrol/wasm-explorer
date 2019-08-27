@@ -1,5 +1,7 @@
 import {Community} from 'tupelo-wasm-sdk'
 
 export const getCommunity = async ()=> {
-    return Community.getDefault()
+    let c = await Community.getDefault()
+    await c.nextUpdate()
+    return c
 }

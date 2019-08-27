@@ -10,7 +10,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { useGlobalState } from './state';
 import { loginRoute } from './wallet/login';
 import { walletRoute } from './wallet/wallet';
+import {Community} from 'tupelo-wasm-sdk';
 
+
+declare global {
+    interface Window { Community: any; }
+}
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -54,6 +59,8 @@ export const NavBar = () => {
             navigation.navigate("/chaintrees/" + search)
         }
     }
+
+    window.Community = Community
 
     return (
         <AppBar position="static">

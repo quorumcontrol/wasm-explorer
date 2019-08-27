@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-navi'
 import { Table, TableHead, TableBody, TableRow, TableCell, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import {CID} from 'tupelo-wasm-sdk'
 
 const useStyles = makeStyles((theme: Theme) => ({
     preFormatted: {
@@ -12,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const NodeRow = ({ label, value, path, did }: { did: string, path: string[], label: string, value: any }) => {
     const classes = useStyles()
     let display
-    if (value && value.constructor && value.constructor.name === "CID") {
+    if (value && CID.isCID(value)) {
         display = (
             <Link
                 href={"/chaintrees/" + did + "?path=" + path.concat(label).join("/")}

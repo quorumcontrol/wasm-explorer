@@ -14,15 +14,6 @@ import { createHashHistory } from 'history';
 import {Community} from 'tupelo-wasm-sdk';
 
 import 'tupelo-wasm-sdk' // in order to bring in the Go global
-declare const Go: any;
-
-const subDirectory = window.location.pathname
-console.log("subDirectory ", subDirectory)
-
-if (subDirectory !== '/') {
-    console.log("setting wasmpath to: ",  subDirectory + "/tupelo.wasm")
-    Go.wasmPath = subDirectory + "/tupelo.wasm"
-}
 
 declare global {
     interface Window { Community: any; }

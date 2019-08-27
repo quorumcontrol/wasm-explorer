@@ -18,7 +18,7 @@
     "react-navi": "^0.13.5",
     "react-scripts": "3.1.0",
     "tupelo-messages": "^0.5.0-rc4",
-    "tupelo-wasm-sdk": "0.0.8",
+    "tupelo-wasm-sdk": "file://../tupelo-wasm-sdk",
     "typeface-roboto": "0.0.75",
     "typescript": "3.5.3",
     "uuid": "^3.3.2"
@@ -44,5 +44,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@microsoft/api-documenter": "^7.3.16"
   }
 }

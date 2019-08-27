@@ -11,6 +11,7 @@ import { useGlobalState } from './state';
 import { loginRoute } from './wallet/login';
 import { walletRoute } from './wallet/wallet';
 import { createHashHistory } from 'history';
+import {Community} from 'tupelo-wasm-sdk';
 
 import 'tupelo-wasm-sdk' // in order to bring in the Go global
 declare const Go: any;
@@ -21,6 +22,10 @@ console.log("subDirectory ", subDirectory)
 if (subDirectory !== '/') {
     console.log("setting wasmpath to: ",  subDirectory + "/tupelo.wasm")
     Go.wasmPath = subDirectory + "/tupelo.wasm"
+}
+
+declare global {
+    interface Window { Community: any; }
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -65,6 +70,8 @@ export const NavBar = () => {
             navigation.navigate("/chaintrees/" + search)
         }
     }
+
+    window.Community = Community
 
     return (
         <AppBar position="static">

@@ -1,15 +1,20 @@
 import React from 'react';
-import { ChainTree } from 'tupelo-wasm-sdk';
+import { ChainTree} from 'tupelo-wasm-sdk';
 import { Typography, makeStyles, Theme } from '@material-ui/core';
 import {Link} from 'react-navi'
 import NodeDisplay from './nodedisplay';
 import { route } from 'navi'
 import { getCommunity } from './community';
 
-
 export const explorerRoute = route(async (req) => {
     const did = req.params.did
-    const fetchTreeResult = await fetchTree(did)
+    let fetchTreeResult
+    try {
+        fetchTreeResult = await fetchTree(did)
+    } catch(e) {
+        console.error("error fetching tree: ", e)
+        throw e
+    }
     let path = [""]
     let decodedCbor
     if (req.params.path) {
@@ -63,6 +68,7 @@ export const fetchTree = async (did: string):Promise<IFetchTreeResult> => {
                 found: false,
             }
         }
+        console.error("error getting tip: ", e)
         throw e
     }
 }
